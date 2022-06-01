@@ -1,9 +1,8 @@
 # Next.js + Temporal
 
 This example shows how to use [Temporal](https://docs.temporal.io/) with Next.js.
+Demonstrate orchestration of customer and order service.
 
-- Tutorial on writing this: https://docs.temporal.io/docs/typescript/nextjs-tutorial
-- Lightning talk on React + Temporal: https://www.youtube.com/watch?v=WRYozSljSpw
 
 ## Instructions
 
@@ -30,16 +29,13 @@ Now you can go to http://localhost:3000/api/hello and see the result:
 There are two versions of this for development purposes.
 
 - http://localhost:3000/ (index) shows a realistic e-commerce situation where some of the state is managed on the frontend.
-  - You can see a demo of this at our Sept 2021 meetup: https://youtu.be/JQ6FRTnQWFI
-- http://localhost:3000/barebones shows buttons for the raw API calls which can be useful for learning and debugging.
 
 ![image](https://user-images.githubusercontent.com/6764957/135000553-6ac7d0b7-d2fb-4901-aee1-73251de33f67.png)
 
 - Click "Buy item"
-- Click "Get State" anytime
-- Things to try
-  - View workflow state in Temporal Web
-  - Click "Cancel Buy" within 5 seconds
+- Flow
+  - The purchase will go in pending state
+  - After the credit has been reserved by the customer service, the purchase will be confirmed/cancelled
 
 ## Architecture Discussion
 
