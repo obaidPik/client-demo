@@ -30,7 +30,6 @@ There are two versions of this for development purposes.
 
 - http://localhost:3000/ (index) shows a realistic e-commerce situation where some of the state is managed on the frontend.
 
-![image](https://user-images.githubusercontent.com/6764957/135000553-6ac7d0b7-d2fb-4901-aee1-73251de33f67.png)
 
 - Click "Buy item"
 - Flow
