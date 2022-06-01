@@ -1,0 +1,36 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import * as wf from '@temporalio/workflow';
+import { executeChild, sleep } from '@temporalio/workflow';
+// // Only import the activity types
+import type * as activities from './activities.js';
+
+const { checkoutItem, canceledPurchase,reserveCredit } = wf.proxyActivities<typeof activities>({
+  startToCloseTimeout: '1 minute',
+});
+
+// @@@SNIPSTART typescript-oneclick-buy
+export async function OneClickBuy(itemId: string,price:number) {
+  const itemToBuy = itemId;
+
+  const response = await executeChild(reserveCreditFunc, { args: [price] });
+  
+  if (response === 'CREDIT_RESERVED') {
+    return await checkoutItem(itemToBuy);
+  } else {
+    return await canceledPurchase(itemToBuy);
+  }
+}
+
+export async function reserveCreditFunc(amount: number): Promise<string> {
+  function timeout(ms:number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+  await timeout(5000);
+  const res= await reserveCredit(amount);
+
+  if (res.status==='success') {
+    return 'CREDIT_RESERVED'
+  }
+  return 'CREDIT_RESERVE_FAILED';
+}
+// @@@SNIPEND
