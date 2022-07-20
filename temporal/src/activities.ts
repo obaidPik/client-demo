@@ -9,14 +9,20 @@ export async function checkoutItem(itemId: string): Promise<object> {
 }
 export async function canceledPurchase(itemId: string): Promise<object> {
   return ({
-    status: 'failed',
+    status: 'cancel',
     message:`cancel purchase ${itemId}!`
   });
+}
+export async function purchaseFailed(itemId:string):Promise<object> {
+  return ({
+    status: 'failed',
+    message:`cancel purchase ${itemId}!`
+  })
 }
 
 export async function reserveCredit(amount:number) {
   
-  console.log('reserving credit....');
+  // console.log('reserving credit....',process.env.NEXT_PUBLIC_API_URL);
   const url = `http://localhost:3000/api/reserveCredit?amount=${amount}`;
   const res = await fetch(url);
   const data = await res.json();

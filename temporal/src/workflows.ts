@@ -4,28 +4,50 @@ import { executeChild, sleep } from '@temporalio/workflow';
 // // Only import the activity types
 import type * as activities from './activities.js';
 
-const { checkoutItem, canceledPurchase,reserveCredit } = wf.proxyActivities<typeof activities>({
+const { checkoutItem, canceledPurchase,reserveCredit,purchaseFailed } = wf.proxyActivities<typeof activities>({
   startToCloseTimeout: '1 minute',
+  retry: {
+    // default retry policy if not specified
+    initialInterval: '1s',
+    backoffCoefficient: 2,
+    maximumAttempts: Infinity,
+    nonRetryableErrorTypes: [],
+  },
 });
+
+type PurchaseState = 'PURCHASE_PENDING' | 'PURCHASE_CONFIRMED' | 'PURCHASE_CANCELED';
+
+export const cancelPurchase = wf.defineSignal('cancelPurchase');
+export const purchaseStateQuery = wf.defineQuery<PurchaseState>('purchaseState');
 
 // @@@SNIPSTART typescript-oneclick-buy
 export async function OneClickBuy(itemId: string,price:number) {
   const itemToBuy = itemId;
 
-  const response = await executeChild(reserveCreditFunc, { args: [price] });
-  
-  if (response === 'CREDIT_RESERVED') {
-    return await checkoutItem(itemToBuy);
-  } else {
+  let purchaseState: PurchaseState = 'PURCHASE_PENDING';
+  wf.setHandler(cancelPurchase, () => void (purchaseState = 'PURCHASE_CANCELED'));
+  wf.setHandler(purchaseStateQuery, () => purchaseState);
+
+  if (await wf.condition(() => purchaseState === 'PURCHASE_CANCELED', '5s')) {
     return await canceledPurchase(itemToBuy);
+  } else {
+    
+    const response = await executeChild(reserveCreditFunc, { args: [price] });
+    
+    if (response === 'CREDIT_RESERVED') {
+      return await checkoutItem(itemToBuy);
+    } else {
+      return await purchaseFailed(itemToBuy);
+    }
   }
+
 }
 
 export async function reserveCreditFunc(amount: number): Promise<string> {
-  function timeout(ms:number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-  await timeout(5000);
+//   function timeout(ms:number) {
+//     return new Promise(resolve => setTimeout(resolve, ms));
+// }
+//   await timeout(5000);
   const res= await reserveCredit(amount);
 
   if (res.status==='success') {

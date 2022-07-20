@@ -1,4 +1,4 @@
-import { Connection, WorkflowClient } from '@temporalio/client';
+import { WorkflowClient,Connection } from '@temporalio/client';
 import { OneClickBuy } from '../../temporal/lib/workflows.js';
 
 export default async function startBuy(req, res) {
@@ -12,8 +12,11 @@ export default async function startBuy(req, res) {
     res.status(405).send({ message: 'must send itemId to buy' });
     return;
   }
+  // const client =;
   // Connect to localhost with default ConnectionOptions,
   // pass options to the Connection constructor to configure TLS and other settings.
+  // Workflows will be started in the "default" namespace unless specified otherwise
+  // via options passed the WorkflowClient constructor.
   const connection = new Connection();
   // Workflows will be started in the "default" namespace unless specified otherwise
   // via options passed the WorkflowClient constructor.

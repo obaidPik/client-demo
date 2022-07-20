@@ -1,0 +1,24 @@
+.counter-wrap{
+    display: flex;
+    padding: 0.5rem;
+    margin: 1rem;
+    position: absolute;
+    right: 120px;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+}
+.counter-wrap > span{
+    background: #85bb65;
+    padding: 0 1rem;
+    color: #f1ffe0;
+    border-radius: 0.5rem;
+    border: 2px solid #f1ffe0;
+    box-shadow: 2px 2px 7px -4px black;
+    min-width: 5.5rem;
+    text-align: center;
+}
+.counter-title{
+
+    margin: .5rem;
+}

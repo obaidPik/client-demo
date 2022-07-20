@@ -1,8 +1,9 @@
 import Head from 'next/head';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { v4 as uuid4 } from 'uuid';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CountUp from 'react-countup';
 
 function fetchAPI(str, obj?: RequestInit) {
   return fetch(str, obj)
@@ -97,12 +98,37 @@ const products = [
 ];
 
 function ProductList() {
+  const [credit, setCredit] = React.useState<number>(0);
+  const [oldCredit, setOldCredit] = React.useState<number>(0);
+  
+  function handleStateChange(flag:number) {
+    if (flag != 0) {
+      setOldCredit(credit);
+      setCredit(credit - flag);
+    } else {
+      setOldCredit(credit);
+      checkCredit();
+    }
+    
+  }
+
+  function checkCredit(){
+    fetchAPI('/api/getCredit').then(res=>setCredit(res.message));
+  }
+
   return (
     <div className="bg-white">
+      <div className='counter-wrap'>
+        <div className='counter-title'>
+          Available Credit
+        </div>
+        {typeof window !== 'undefined'&&<CountUp start={oldCredit} end={credit} prefix={'$'} duration={1} /> }
+        
+      </div>
       <div className="max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
         <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 sm:gap-y-10 md:grid-cols-4">
           {products.map((product) => (
-            <Product product={product} key={product.id} />
+            <Product product={product} onChange={(flag)=>handleStateChange(flag)} key={product.id} />
           ))}
         </div>
       </div>
@@ -110,14 +136,21 @@ function ProductList() {
   );
 }
 
-type ITEMSTATE = 'NEW' | 'SENDING' | 'ORDERED' | 'CONFIRMED' | 'CANCELLING' | 'ERROR';
+type ITEMSTATE = 'NEW' | 'SENDING' | 'ORDERED'| 'ORDER_PENDING' | 'CONFIRMED' | 'CANCELLING' | 'ERROR';
 
-function Product({ product }) {
+function Product({ product,onChange }) {
   const itemId = product.id;
   const price = product.price;
   const [state, setState] = React.useState<ITEMSTATE>('NEW');
   const stateRef = React.useRef<ITEMSTATE>();
   stateRef.current = state;
+
+
+  useEffect(() => {
+    if (state === 'NEW' || state === 'CONFIRMED') {
+      onChange(0);
+    }
+  },[state])
 
   // Generate a uuid for initiating this transaction.
   // This is generated on this client for idempotency concerns.
@@ -131,11 +164,20 @@ function Product({ product }) {
   const toastId = React.useRef(null);
   function buyProduct() {
     setState('ORDERED');
+    onChange(parseInt(price.split('$')[1]));
     toastId.current = toast.success('Order Placed! We will let you know once we confirm your order ', {
       position: 'top-right',
       closeOnClick: true,
       autoClose:2000,
       draggable: true,
+      onClose: () => {
+        if (stateRef.current === 'ORDERED') {
+          setState('ORDER_PENDING');
+        } else if (stateRef.current === 'CANCELLING') {
+          setState('NEW');
+          setTransactionId(uuid4());
+        }
+      },
     });
     fetchAPI('/api/startBuy', {
       method: 'POST',
@@ -153,6 +195,13 @@ function Product({ product }) {
           autoClose:2000,
           draggable: true,
         });
+      } else if (res.status === 'cancel') {
+        setState('NEW');
+        toastId.current = toast.success('Order Cancelled', {
+          position: 'top-right',
+          closeOnClick: true,
+          draggable: true,
+        });
       } else {
         setState('NEW');
         toastId.current = toast.success('Order Cancelled - Payment failed', {
@@ -165,6 +214,21 @@ function Product({ product }) {
     //     method: 'GET',
     //  })
     });
+  }
+  function cancelBuy() {
+    if (state === 'ORDERED') {
+      setState('CANCELLING');
+      fetchAPI('/api/cancelBuy?id=' + transactionId).catch((err) => {
+        setState('ERROR');
+        toast.error(err, {
+          position: 'top-right',
+          autoClose: 5000,
+          closeOnClick: true,
+          draggable: true,
+        });
+      });
+      toast.dismiss(toastId.current);
+    }
   }
 
   return (
@@ -190,7 +254,16 @@ function Product({ product }) {
               ),
               ORDERED: (
                 <button
-                  // onClick={cancelBuy}
+                  onClick={cancelBuy}
+                  className="w-full bg-white hover:bg-blue-200 bg-opacity-75 backdrop-filter backdrop-blur py-2 px-4 rounded-md text-sm font-medium text-gray-900 text-center"
+                >
+                  {/* {getState()} */}
+                  Click to Cancel
+                </button>
+              ),
+              ORDER_PENDING: (
+                <button
+                  onClick={cancelBuy}
                   className="w-full bg-white hover:bg-blue-200 bg-opacity-75 backdrop-filter backdrop-blur py-2 px-4 rounded-md text-sm font-medium text-gray-900 text-center"
                 >
                   {/* {getState()} */}
