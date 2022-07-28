@@ -1,4 +1,5 @@
 const getEnvironmentVariable = (environmentVariable: string): string => {
+  console.log('***********',process.env.NEXT_PUBLIC_API_URL)
     const unvalidatedEnvironmentVariable = process.env[environmentVariable];
     if (!unvalidatedEnvironmentVariable) {
       throw new Error(
@@ -10,5 +11,5 @@ const getEnvironmentVariable = (environmentVariable: string): string => {
   };
   
   export const config = {
-    url: getEnvironmentVariable("API_URL")
+    url: getEnvironmentVariable("NEXT_PUBLIC_API_URL")
   };

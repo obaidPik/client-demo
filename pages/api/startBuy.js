@@ -17,10 +17,15 @@ export default async function startBuy(req, res) {
   // pass options to the Connection constructor to configure TLS and other settings.
   // Workflows will be started in the "default" namespace unless specified otherwise
   // via options passed the WorkflowClient constructor.
-  const connection = new Connection();
-  // Workflows will be started in the "default" namespace unless specified otherwise
-  // via options passed the WorkflowClient constructor.
-  const client = new WorkflowClient(connection.service);
+
+  console.log('reserving credit....',process.env.NEXT_PUBLIC_API_URL);
+
+  const connection = await Connection.connect({
+    address: '44.202.2.174', // defaults port to 7233 if not specified
+  });
+  const client = new WorkflowClient({
+    connection,
+  });
   // kick off the purchase async
   const handle = await client.start(OneClickBuy, {
     taskQueue: 'ecommerce-oneclick',

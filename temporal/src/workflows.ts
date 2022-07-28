@@ -10,7 +10,7 @@ const { checkoutItem, canceledPurchase,reserveCredit,purchaseFailed } = wf.proxy
     // default retry policy if not specified
     initialInterval: '1s',
     backoffCoefficient: 2,
-    maximumAttempts: Infinity,
+    maximumAttempts: 10,
     nonRetryableErrorTypes: [],
   },
 });
