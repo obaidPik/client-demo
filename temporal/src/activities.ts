@@ -21,10 +21,10 @@ export async function purchaseFailed(itemId:string):Promise<object> {
   })
 }
 
-export async function reserveCredit(amount:number) {
+export async function reserveCredit(amount:number,env:any) {
   
   console.log('reserving credit....',process.env);
-  const url = `${process.env.NEXT_PUBLIC_API_URL}api/reserveCredit?amount=${amount}`;
+  const url = `${env.NEXT_PUBLIC_API_URL}api/reserveCredit?amount=${amount}`;
   const res = await fetch(url);
   const data = await res.json();
   if (data.message === 'success') {

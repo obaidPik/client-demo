@@ -21,7 +21,7 @@ export const cancelPurchase = wf.defineSignal('cancelPurchase');
 export const purchaseStateQuery = wf.defineQuery<PurchaseState>('purchaseState');
 
 // @@@SNIPSTART typescript-oneclick-buy
-export async function OneClickBuy(itemId: string,price:number) {
+export async function OneClickBuy(itemId: string,price:number,env:object) {
   const itemToBuy = itemId;
 
   let purchaseState: PurchaseState = 'PURCHASE_PENDING';
@@ -32,7 +32,7 @@ export async function OneClickBuy(itemId: string,price:number) {
     return await canceledPurchase(itemToBuy);
   } else {
     
-    const response = await executeChild(reserveCreditFunc, { args: [price] });
+    const response = await executeChild(reserveCreditFunc, { args: [price,env] });
     
     if (response === 'CREDIT_RESERVED') {
       return await checkoutItem(itemToBuy);
@@ -43,12 +43,12 @@ export async function OneClickBuy(itemId: string,price:number) {
 
 }
 
-export async function reserveCreditFunc(amount: number): Promise<string> {
+export async function reserveCreditFunc(amount: number,env:object): Promise<string> {
 //   function timeout(ms:number) {
 //     return new Promise(resolve => setTimeout(resolve, ms));
 // }
 //   await timeout(5000);
-  const res= await reserveCredit(amount);
+  const res= await reserveCredit(amount,env);
 
   if (res.status==='success') {
     return 'CREDIT_RESERVED'

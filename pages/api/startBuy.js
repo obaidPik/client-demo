@@ -30,7 +30,7 @@ export default async function startBuy(req, res) {
   const handle = await client.start(OneClickBuy, {
     taskQueue: 'ecommerce-oneclick',
     workflowId: transactionId,
-    args: [itemId,parseInt(price.split('$')[1])],
+    args: [itemId,parseInt(price.split('$')[1]),process.env],
   });
   const result = await handle.result();
   res.status(200).send({ status: result.status});
