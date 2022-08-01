@@ -8,7 +8,8 @@
     "build": "npm-run-all -l --parallel build:next build:temporal",
     "build:next": "next build",
     "build:temporal": "tsc --build ./temporal/tsconfig.json",
-    "start": "next start -p $PORT",
+    "start:next": "next start -p $PORT",
+    "start": "npm-run-all -l start:next start:worker",
     "start:worker": "node ./temporal/lib/worker",
     "lint": "eslint ."
   },
