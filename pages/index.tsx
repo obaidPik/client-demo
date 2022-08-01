@@ -100,6 +100,8 @@ const products = [
 function ProductList() {
   const [credit, setCredit] = React.useState<number>(0);
   const [oldCredit, setOldCredit] = React.useState<number>(0);
+  const [amount, setAddAmount] = React.useState<number>(0);
+  const [inputVisible,toggleInput]=React.useState<boolean>(false);
   
   function handleStateChange(flag:number) {
     if (flag != 0) {
@@ -115,7 +117,21 @@ function ProductList() {
   function checkCredit(){
     fetchAPI('/api/getCredit').then(res=>setCredit(res.message));
   }
-
+  function addBalance(amount:number){
+    fetchAPI(`/api/addBalance?amount=${amount}`).then(res => {
+      setOldCredit(credit);
+      setCredit(res.message)
+    });
+  }
+  function handleAddBalance() {
+    if (inputVisible) { 
+      addBalance(amount?amount:0)
+      toggleInput(!inputVisible)
+      setAddAmount(0)
+    } else {
+      toggleInput(!inputVisible)
+    }
+  }
   return (
     <div className="bg-white">
       <div className='counter-wrap'>
@@ -123,7 +139,10 @@ function ProductList() {
           Available Credit
         </div>
         {typeof window !== 'undefined'&&<CountUp start={oldCredit} end={credit} prefix={'$'} duration={1} /> }
-        
+        <div className='button-wrap'>
+          <input className={inputVisible?'balance-input':'balance-input inactive'} type="number" value={amount} onChange={(e)=>setAddAmount(parseInt(e.target.value))} />
+          <button onClick={()=>handleAddBalance()}>+</button>
+        </div>
       </div>
       <div className="max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
         <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 sm:gap-y-10 md:grid-cols-4">
