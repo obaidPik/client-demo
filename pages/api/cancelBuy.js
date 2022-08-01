@@ -1,4 +1,4 @@
-import { WorkflowClient } from '@temporalio/client';
+import { WorkflowClient,Connection } from '@temporalio/client';
 
 export default async function cancelBuy(req, res) {
   const { id } = req.query;
@@ -7,10 +7,17 @@ export default async function cancelBuy(req, res) {
     return;
   }
 
-  const client = new WorkflowClient();
+  const connection = await Connection.connect({
+    address: '44.202.2.174', // defaults port to 7233 if not specified
+  });
+  const client = new WorkflowClient({
+    connection,
+  });
+
   const workflow = client.getHandle(id);
   try {
     await workflow.signal('cancelPurchase');
+    console.log('$$$ cancelled');
     res.status(200).json({ cancelled: id });
   } catch (e) {
     console.error(e);

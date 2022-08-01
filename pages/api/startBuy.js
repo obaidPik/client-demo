@@ -18,8 +18,6 @@ export default async function startBuy(req, res) {
   // Workflows will be started in the "default" namespace unless specified otherwise
   // via options passed the WorkflowClient constructor.
 
-  console.log('reserving credit....',process.env.NEXT_PUBLIC_API_URL);
-
   const connection = await Connection.connect({
     address: '44.202.2.174', // defaults port to 7233 if not specified
   });
