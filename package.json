@@ -9,7 +9,7 @@
     "build:next": "next build",
     "build:temporal": "tsc --build ./temporal/tsconfig.json",
     "start:next": "next start -p $PORT",
-    "start": "npm-run-all -l start:next start:worker",
+    "start": "npm-run-all -l start:next",
     "start:worker": "node ./temporal/lib/worker",
     "lint": "eslint ."
   },
