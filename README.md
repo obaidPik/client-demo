@@ -93,5 +93,5 @@ The workflow has to be signaled if the user cancels the purchase.
 - get workflow handle by passing the workflow id 
 - signal by workflow.signal('cancelPurchase')
 
-Read more about - [workflow clients](https://docs.temporal.io/typescript/clients/), [/how-to-use-signals-in-typescrip](https://docs.temporal.io/typescript/how-to-use-signals-in-typescript/)
+Read more about - [workflow clients](https://docs.temporal.io/typescript/clients/), [how-to-use-signals-in-typescrip](https://docs.temporal.io/typescript/how-to-use-signals-in-typescript/)
 
