@@ -1,6 +1,9 @@
 
 // import fetch from "node-fetch";
 const fetch = require('node-fetch');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 export async function checkoutItem(itemId: string): Promise<object> {
   return ({
@@ -21,10 +24,9 @@ export async function purchaseFailed(itemId:string):Promise<object> {
   })
 }
 
-export async function reserveCredit(amount:number,env:any) {
+export async function reserveCredit(amount:number) {
   
-  console.log('reserving credit....',process.env);
-  const url = `${env.NEXT_PUBLIC_API_URL}api/reserveCredit?amount=${amount}`;
+  const url = `${process.env.NEXT_PUBLIC_API_URL}api/reserveCredit?amount=${amount}`;
   const res = await fetch(url);
   const data = await res.json();
   if (data.message === 'success') {

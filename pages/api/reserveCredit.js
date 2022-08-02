@@ -3,7 +3,6 @@ import { doc, getDoc,setDoc } from "firebase/firestore";
 import { getFirestore } from 'firebase/firestore';
 
 export default async function reserveCredit(req, res) {
-    console.log('function call');
   const { amount } = req.query;
   if (!amount) {
     res.status(405).send({ message: 'must send amount to reserve credit' });

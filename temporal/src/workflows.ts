@@ -32,7 +32,7 @@ export async function OneClickBuy(itemId: string,price:number,env:object) {
     return await canceledPurchase(itemToBuy);
   } else {
     
-    const response = await executeChild(reserveCreditFunc, { args: [price,env] });
+    const response = await executeChild(reserveCreditFunc, { args: [price] });
     
     if (response === 'CREDIT_RESERVED') {
       return await checkoutItem(itemToBuy);
@@ -43,12 +43,8 @@ export async function OneClickBuy(itemId: string,price:number,env:object) {
 
 }
 
-export async function reserveCreditFunc(amount: number,env:object): Promise<string> {
-//   function timeout(ms:number) {
-//     return new Promise(resolve => setTimeout(resolve, ms));
-// }
-//   await timeout(5000);
-  const res= await reserveCredit(amount,env);
+export async function reserveCreditFunc(amount: number): Promise<string> {
+  const res= await reserveCredit(amount);
 
   if (res.status==='success') {
     return 'CREDIT_RESERVED'

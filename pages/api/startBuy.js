@@ -18,8 +18,12 @@ export default async function startBuy(req, res) {
   // Workflows will be started in the "default" namespace unless specified otherwise
   // via options passed the WorkflowClient constructor.
 
+const dotenv = require('dotenv');
+
+dotenv.config();
+
   const connection = await Connection.connect({
-    address: '44.202.2.174', // defaults port to 7233 if not specified
+    address: process.env.TEMPORAL_SERVER_URL, // defaults port to 7233 if not specified
   });
   const client = new WorkflowClient({
     connection,
@@ -28,7 +32,7 @@ export default async function startBuy(req, res) {
   const handle = await client.start(OneClickBuy, {
     taskQueue: 'ecommerce-oneclick',
     workflowId: transactionId,
-    args: [itemId,parseInt(price.split('$')[1]),process.env],
+    args: [itemId,parseInt(price.split('$')[1])],
   });
   const result = await handle.result();
   res.status(200).send({ status: result.status});
