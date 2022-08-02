@@ -20,8 +20,6 @@ The `dev` script does 3 things:
 
 ## Demo
 
-There are two versions of this for development purposes.
-
 - http://localhost:3000/ (index) shows a realistic e-commerce situation where some of the state is managed on the frontend.
 
 
