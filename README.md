@@ -18,12 +18,6 @@ The `dev` script does 3 things:
 - runs `temporal:dev` which runs the Temporal Worker, Workflows, and Activities code through the TypeScript compiler in watch mode
 - runs `temporal:worker` which runs the compiled `worker.ts` file
 
-Now you can go to http://localhost:3000/api/hello and see the result:
-
-```json
-{ "name": "John Doe" }
-```
-
 ## Demo
 
 There are two versions of this for development purposes.
@@ -35,7 +29,8 @@ There are two versions of this for development purposes.
 - Flow
   - The purchase will go in pending state
   - After the credit has been reserved by the customer service, the purchase will be confirmed/cancelled
-
+  - Within 5s of purchase, if clicked cancelled, the purchase is cancelled.
+  
 ## Architecture Discussion
 
 This example makes two decisions which often generate questions:
@@ -46,10 +41,52 @@ This example makes two decisions which often generate questions:
    - Long polling or websocket subscriptions model is also possible for more instantaneous update but probably would require a different API architecture
 2. Next.js frontend talking to a Next.js API route, instead of talking to Temporal directly
    - Temporal Clients use gRPC to talk to Temporal Server, therefore it is easier to do it from the serverside than from the browser, particularly where auth secrets are involved
-   - However we do have users that use `grpc-web` on the frontend directly and do authz on the backend through authz middleware on an ambassador router/envoy proxy. Ask in our Slack for more info.
+   - However we do have users that use `grpc-web` on the frontend directly and do authz on the backend through authz middleware on an ambassador router/envoy proxy.
 
 ## Deploy
 
-We haven't worked out the deploy story yet but eventually we'd love for you to deploy this example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example):
+This sample project is deployed on heroku server. 
+Demo - [Temporal.io purchase-reserve credit app](https://temporal-demo-client.herokuapp.com/)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-tailwindcss&project-name=with-tailwindcss&repository-name=with-tailwindcss)
+Build - npm run build
+Serve - npm start
+
+on build temporal and next app is built parallelly. On 'npm start' next app and worker are run.
+
+## nextjs-ecommerce-oneclick/temporal
+### worker.ts
+- imports Worker, NativeConnection module from "@temporalio/worker"
+- create a connection the temporal server (server address is provided as option)
+- create worker using Worker
+  - connection
+  - workflow.ts path
+  - taskQueue name (same will be maintained in the temporal sever)
+  - activities
+- run the worker
+
+### activities.ts - actions
+Define actions that are needed to execute the workflow
+- canceledPurchase 
+- purchaseFailed
+- reserveCredit
+- checkoutItem
+
+### workflows.ts
+Define workflows
+- define query purchaseState
+- define signal cancelPurchase
+- wait for the cancel signal from user for 5s, if recieved cancel the purchase.
+- execute child workflow - reserverCredit 
+- execure reserveCredit activity
+- on the result cancel/confirm purchase (execute activities)
+
+## Signal Cancel
+
+The workflow has to be signaled if the user cancels the purchase. 
+- create connection like in worker.ts
+- create a workflow-client (provide the connection)
+- get workflow handle by passing the workflow id 
+- signal by workflow.signal('cancelPurchase')
+
+ 
+
