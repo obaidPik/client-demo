@@ -61,7 +61,8 @@ on build temporal and next app is built parallelly. On 'npm start' next app and 
   - taskQueue name (same will be maintained in the temporal sever)
   - activities
 - run the worker
-[worker]-(https://docs.temporal.io/workers/)
+
+[worker](https://docs.temporal.io/workers/)
 
 ### activities.ts - actions
 Define actions that are needed to execute the workflow
@@ -69,6 +70,7 @@ Define actions that are needed to execute the workflow
 - purchaseFailed
 - reserveCredit
 - checkoutItem
+
 [activities](https://docs.temporal.io/activities/)
 
 ### workflows.ts
@@ -79,6 +81,7 @@ Define workflows
 - execute child workflow - reserverCredit 
 - execure reserveCredit activity
 - on the result cancel/confirm purchase (execute activities)
+
 [workflows](https://docs.temporal.io/workflows/)
 
 
