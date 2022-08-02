@@ -62,7 +62,7 @@ on build temporal and next app is built parallelly. On 'npm start' next app and 
   - activities
 - run the worker
 
-[worker](https://docs.temporal.io/workers/)
+Read more about [worker](https://docs.temporal.io/workers/)
 
 ### activities.ts - actions
 Define actions that are needed to execute the workflow
@@ -71,7 +71,7 @@ Define actions that are needed to execute the workflow
 - reserveCredit
 - checkoutItem
 
-[activities](https://docs.temporal.io/activities/)
+Read more about [activities](https://docs.temporal.io/activities/)
 
 ### workflows.ts
 Define workflows
@@ -82,7 +82,7 @@ Define workflows
 - execure reserveCredit activity
 - on the result cancel/confirm purchase (execute activities)
 
-[workflows](https://docs.temporal.io/workflows/)
+Read more about [workflows](https://docs.temporal.io/workflows/)
 
 
 ## Signal Cancel
@@ -93,5 +93,5 @@ The workflow has to be signaled if the user cancels the purchase.
 - get workflow handle by passing the workflow id 
 - signal by workflow.signal('cancelPurchase')
 
- More Information - [workflow clients](https://docs.temporal.io/typescript/clients/), [/how-to-use-signals-in-typescrip](https://docs.temporal.io/typescript/how-to-use-signals-in-typescript/)
+Read more about - [workflow clients](https://docs.temporal.io/typescript/clients/), [/how-to-use-signals-in-typescrip](https://docs.temporal.io/typescript/how-to-use-signals-in-typescript/)
 
