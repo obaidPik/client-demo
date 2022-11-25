@@ -18,4 +18,4 @@ Then, in the project directory, run:
 
   {cyan npm run dev}
 
-And open {bold http://localhost:3000}
+And open {bold http://localhost:3001}

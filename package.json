@@ -22,7 +22,7 @@
     "@temporalio/worker": "1.0.0",
     "@temporalio/workflow": "1.0.0",
     "dotenv": "^16.0.1",
-    "firebase": "^9.8.2",
+    "firebase": "^9.14.0",
     "next": "latest",
     "node-fetch": "^2.6.7",
     "react": "^17.0.2",
